@@ -26,3 +26,18 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* Slider CSS */
+@layer components {
+  .slider-green {
+    @apply appearance-none w-full h-2 bg-gray-200 rounded-lg cursor-pointer;
+  }
+
+  .slider-green::-webkit-slider-thumb {
+    @apply appearance-none w-4 h-4 bg-green-600 rounded-full cursor-pointer;
+  }
+
+  .slider-green::-moz-range-thumb {
+    @apply w-4 h-4 bg-green-600 rounded-full cursor-pointer;
+  }
+}

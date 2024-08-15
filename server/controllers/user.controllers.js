@@ -54,7 +54,7 @@ const signUp = async (req, res) => {
 };
 
 const signIn = async (req, res) => {
-    const { email, password, userType } = req.body;
+    const { email, password, adminValidationNumber, userType } = req.body;
 
     try {
         const UserModel = getUserModel(userType);
@@ -70,6 +70,10 @@ const signIn = async (req, res) => {
 
         if (userType === 'DOCTOR' && user.status !== 'APPROVED') {
             return res.status(403).json({ message: 'Doctor account not approved yet' });
+        }
+
+        if (userType == "ADMIN" && user.adminValidationNumber !== adminValidationNumber) {
+            return res.status(403).json({ message: 'Please a valid admin number' });
         }
 
         const token = jwt.sign({ userId: user._id, userType }, JWT_SECRET, { expiresIn: '1h' });

@@ -162,7 +162,7 @@ const Authentication = () => {
               placeholder="Password"
               required
             />
-            {!isSignUp && userType === "admin" && (
+            {!isSignUp && userType === "ADMIN" && (
               <input
                 name="adminValidationNumber"
                 value={formData.adminValidationNumber}

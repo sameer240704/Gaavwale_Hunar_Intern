@@ -1,20 +1,20 @@
-const { Patient, Doctor, Admin } = require('../models/user.models');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const { Patient, Doctor, Admin } = require("../models/user.models");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const getUserModel = (userType) => {
-    switch (userType) {
-        case 'PATIENT':
-            return Patient;
-        case 'DOCTOR':
-            return Doctor;
-        case 'ADMIN':
-            return Admin;
-        default:
-            throw new Error('Invalid user type');
-    }
+  switch (userType) {
+    case "PATIENT":
+      return Patient;
+    case "DOCTOR":
+      return Doctor;
+    case "ADMIN":
+      return Admin;
+    default:
+      throw new Error("Invalid user type");
+  }
 };
 
 const signUp = async (req, res) => {
@@ -64,6 +64,15 @@ const signUp = async (req, res) => {
         console.error('Error in sign up:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
+
+    const newUser = new UserModel(userData);
+    await newUser.save();
+
+    res.status(201).json({ message: "User created successfully" });
+  } catch (error) {
+    console.error("Error in sign up:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 const signIn = async (req, res) => {
@@ -107,9 +116,29 @@ const signIn = async (req, res) => {
         console.error('Error in sign in:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
+
+    const token = jwt.sign({ userId: user._id, userType }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({ token, message: "Sign in successful" });
+  } catch (error) {
+    console.error("Error in sign in:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error in logging out:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 module.exports = {
-    signUp,
-    signIn,
+  signUp,
+  signIn,
+  logout,
 };

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext'; // Import your AuthContext hook
+import Cookies from 'js-cookie'; // Import js-cookie
 
 const useAuth = () => {
     const [isSignUp, setIsSignUp] = useState(true);
@@ -16,6 +18,7 @@ const useAuth = () => {
     });
 
     const navigate = useNavigate();
+    const { setAuthUser } = useAuthContext(); // Get the setAuthUser function from AuthContext
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -40,11 +43,26 @@ const useAuth = () => {
             });
 
             if (response.ok) {
-                const data = await response.json();
+                const { data } = await response.json();
                 toast.success(isSignUp ? 'User created successfully' : 'Welcome back!');
+
                 if (!isSignUp) {
                     localStorage.setItem('token', data.token);
+
+                    const authUser = {
+                        userId: data.userId,
+                        userType: data.userType,
+                        name: data.name,
+                        email: data.email,
+                    };
+
+                    localStorage.setItem('medmate-user', JSON.stringify(authUser));
+                    setAuthUser(authUser); // Update the AuthContext
+
+                    Cookies.set('userId', data.userId, { expires: 7 }); // Expires in 7 days
+                    Cookies.set('userType', data.userType, { expires: 7 }); // Expires in 7 days
                 }
+
                 if (isSignUp) {
                     setFormData({
                         name: '',
@@ -56,10 +74,11 @@ const useAuth = () => {
                         adminValidationNumber: '',
                     });
                 }
-                navigate('/dashboard');
+
+                navigate(`/${userType.toLowerCase()}/dashboard`);
             } else {
-                const errorData = await response.json();
-                toast.error(errorData.message || 'Error during authentication');
+                const { message } = await response.json();
+                toast.error(message || 'Error during authentication');
             }
         } catch (error) {
             console.error('Error:', error);

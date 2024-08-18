@@ -1,16 +1,25 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AdminPanel, Authentication, Dashboard } from "./pages";
 import { Notes } from "./components";
 import { Toaster } from "react-hot-toast";
+import { useAuthContext } from "./context/AuthContext";
+
 
 function App() {
+  const { authUser } = useAuthContext();
+
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/admin" element={<AdminPanel />} />
           <Route path="/auth" element={<Authentication />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin/dashboard" element={<AdminPanel />} />
+          <Route path={`patient/dashboard`} element={<Dashboard />} />
+          <Route path={`doctor/dashboard`} element={<Dashboard />} />
+          <Route
+            path="/auth"
+            element={authUser ? <Navigate to="/admin/dashboard" /> : <Navigate to="/auth" />}
+          />
           <Route path="/dashboard/notes" element={<Notes />} />
         </Routes>
       </Router>

@@ -1,7 +1,8 @@
-require('dotenv').config();
-const express = require('express');
-const { connectToDatabase } = require('./database/db');
+require("dotenv").config();
+const express = require("express");
+const { connectToDatabase } = require("./database/db");
 const userRoutes = require("./routes/user.routes.js");
+const medicalRoutes = require("./routes/medical.routes.js");
 const cors = require("cors");
 
 const app = express();
@@ -14,8 +15,9 @@ app.use(cors());
 connectToDatabase();
 
 // Routes
-app.use('/user', userRoutes);
+app.use("/user", userRoutes);
+app.use("/api", medicalRoutes);
 
 app.listen(process.env.PORT, () => {
-    console.log(`Server live on port ${process.env.PORT}`)
-})
+  console.log(`Server live on port ${process.env.PORT}`);
+});

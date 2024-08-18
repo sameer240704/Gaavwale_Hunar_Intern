@@ -46,7 +46,20 @@ const signUp = async (req, res) => {
         const newUser = new UserModel(userData);
         await newUser.save();
 
-        res.status(201).json({ message: 'User created successfully' });
+        const token = jwt.sign({ userId: newUser._id, userType }, JWT_SECRET, { expiresIn: '1h' });
+
+        res.cookie('userId', newUser._id.toString(), { httpOnly: true });
+        res.cookie('userType', userType, { httpOnly: true });
+
+        const data = {
+            token: token,
+            userId: user._id.toString(),
+            userType: user.userType,
+            name: user.name,
+            email: user.email,
+        };
+
+        res.status(201).json({ data, message: 'User created successfully' });
     } catch (error) {
         console.error('Error in sign up:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -78,7 +91,18 @@ const signIn = async (req, res) => {
 
         const token = jwt.sign({ userId: user._id, userType }, JWT_SECRET, { expiresIn: '1h' });
 
-        res.status(200).json({ token, message: 'Sign in successful' });
+        res.cookie('userId', user._id.toString(), { httpOnly: true });
+        res.cookie('userType', userType, { httpOnly: true });
+
+        const data = {
+            token: token,
+            userId: user._id.toString(),
+            userType: user.userType,
+            name: user.name,
+            email: user.email,
+        };
+
+        res.status(200).json({ data, message: 'Sign in successful' });
     } catch (error) {
         console.error('Error in sign in:', error);
         res.status(500).json({ message: 'Internal server error' });

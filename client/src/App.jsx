@@ -20,7 +20,7 @@ function App() {
             path="/auth"
             element={authUser ? <Navigate to="/admin/dashboard" /> : <Navigate to="/auth" />}
           />
-          <Route path="/dashboard/notes" element={<Notes />} />
+          <Route path="/dashboard/notes/:doctorId/:patientId" element={<Notes />} />
         </Routes>
       </Router>
       <Toaster />

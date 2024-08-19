@@ -36,12 +36,10 @@ const notesSchema = new Schema({
     },
   ],
   bloodPressure: [
-    [
-      {
-        systolic: { type: Number },
-        diastolic: { type: Number },
-      },
-    ],
+    {
+      systolic: { type: Number, required: true },
+      diastolic: { type: Number, required: true },
+    },
   ],
   temperature: [
     {
